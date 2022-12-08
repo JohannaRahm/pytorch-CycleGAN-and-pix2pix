@@ -56,7 +56,9 @@ class AlignedDataset(BaseDataset):
         # B_transform = get_transform(self.opt, transform_params, grayscale=(self.output_nc == 1))
 
         import torchvision.transforms as transforms
-        A = transforms.ToTensor(A)
+        transform_list = []
+        transform_list += [transforms.ToTensor()]
+        A = transforms.Compose(transform_list)(A)
         # A = A_transform(A)
         # B = B_transform(B)
         print("A", A)
@@ -64,6 +66,7 @@ class AlignedDataset(BaseDataset):
         print(img_matrix, np.unique(img_matrix))
 
         return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
+
 
     def __len__(self):
         """Return the total number of images in the dataset."""
