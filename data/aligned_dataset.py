@@ -66,7 +66,7 @@ class AlignedDataset(BaseDataset):
         print(img_matrix, np.unique(img_matrix))
         import torch
         default_float_dtype = torch.get_default_dtype()
-        A.to(dtype=default_float_dtype).div(65535)
+        A = A.to(dtype=default_float_dtype).div(65535)
         print("A2", A)
         img_matrix = np.array(A)
         print(img_matrix, np.unique(img_matrix))
