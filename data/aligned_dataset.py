@@ -71,6 +71,8 @@ class AlignedDataset(BaseDataset):
         img_matrix = np.array(A)
         print(img_matrix, np.unique(img_matrix))
 
+        
+
 
         return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
 
