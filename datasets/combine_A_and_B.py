@@ -4,6 +4,7 @@ import cv2
 import argparse
 from multiprocessing import Pool
 
+print("combine data hi!")
 
 def image_write(path_A, path_B, path_AB):
     im_A = cv2.imread(path_A, 1) # python2: cv2.CV_LOAD_IMAGE_COLOR; python3: cv2.IMREAD_COLOR
