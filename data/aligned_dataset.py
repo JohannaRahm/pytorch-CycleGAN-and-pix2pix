@@ -51,13 +51,15 @@ class AlignedDataset(BaseDataset):
         B = AB.crop((w2, 0, w, h))
 
         # apply the same transform to both A and B
-        transform_params = get_params(self.opt, A.size)
-        A_transform = get_transform(self.opt, transform_params, grayscale=(self.input_nc == 1))
-        B_transform = get_transform(self.opt, transform_params, grayscale=(self.output_nc == 1))
+        # transform_params = get_params(self.opt, A.size)
+        # A_transform = get_transform(self.opt, transform_params, grayscale=(self.input_nc == 1))
+        # B_transform = get_transform(self.opt, transform_params, grayscale=(self.output_nc == 1))
 
-        A = A_transform(A)
-        B = B_transform(B)
-        print("A_transform", A)
+        import torchvision.transforms as transforms
+        A = transforms.ToTensor(A)
+        # A = A_transform(A)
+        # B = B_transform(B)
+        print("A", A)
         img_matrix = np.array(A)
         print(img_matrix, np.unique(img_matrix))
 
