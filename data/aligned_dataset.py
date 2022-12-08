@@ -38,11 +38,11 @@ class AlignedDataset(BaseDataset):
         """
         # read a image given a random integer index
         AB_path = self.AB_paths[index]
-        AB = Image.open(AB_path)#.convert('RGB')
+        AB = Image.open(AB_path, mode="I;16")#.convert('RGB')
         print("AB", AB, AB.format_description, AB.mode)
         import numpy as np
         img_matrix = np.array(AB)
-        print(img_matrix, np.unique(img_matrix)[0])
+        print(img_matrix, np.unique(img_matrix))
         # split AB image into A and B
         w, h = AB.size
         w2 = int(w / 2)
@@ -56,6 +56,9 @@ class AlignedDataset(BaseDataset):
 
         A = A_transform(A)
         B = B_transform(B)
+        print("A_transform", A)
+        img_matrix = np.array(A)
+        print(img_matrix, np.unique(img_matrix))
 
         return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
 
