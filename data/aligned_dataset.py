@@ -39,6 +39,7 @@ class AlignedDataset(BaseDataset):
         # read a image given a random integer index
         AB_path = self.AB_paths[index]
         AB = Image.open(AB_path)#.convert('RGB')
+        AB = AB.convert("I;16")
         print("AB", AB, AB.format_description, AB.mode)
         import numpy as np
         img_matrix = np.array(AB)
@@ -50,15 +51,15 @@ class AlignedDataset(BaseDataset):
         B = AB.crop((w2, 0, w, h))
 
         # apply the same transform to both A and B
-        transform_params = get_params(self.opt, A.size)
-        A_transform = get_transform(self.opt, transform_params, grayscale=(self.input_nc == 1))
-        B_transform = get_transform(self.opt, transform_params, grayscale=(self.output_nc == 1))
-
-        A = A_transform(A)
-        B = B_transform(B)
-        print("A_transform", A)
-        img_matrix = np.array(A)
-        print(img_matrix, np.unique(img_matrix))
+        # transform_params = get_params(self.opt, A.size)
+        # A_transform = get_transform(self.opt, transform_params, grayscale=(self.input_nc == 1))
+        # B_transform = get_transform(self.opt, transform_params, grayscale=(self.output_nc == 1))
+        #
+        # A = A_transform(A)
+        # B = B_transform(B)
+        # print("A_transform", A)
+        # img_matrix = np.array(A)
+        # print(img_matrix, np.unique(img_matrix))
 
         return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
 
