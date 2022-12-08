@@ -64,6 +64,13 @@ class AlignedDataset(BaseDataset):
         print("A", A)
         img_matrix = np.array(A)
         print(img_matrix, np.unique(img_matrix))
+        import torch
+        default_float_dtype = torch.get_default_dtype()
+        A.to(dtype=default_float_dtype).div(65535)
+        print("A2", A)
+        img_matrix = np.array(A)
+        print(img_matrix, np.unique(img_matrix))
+
 
         return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
 
