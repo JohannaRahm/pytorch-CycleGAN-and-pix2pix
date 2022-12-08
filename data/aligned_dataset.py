@@ -38,7 +38,7 @@ class AlignedDataset(BaseDataset):
         """
         # read a image given a random integer index
         AB_path = self.AB_paths[index]
-        AB = Image.open(AB_path, mode="I;16")#.convert('RGB')
+        AB = Image.open(AB_path)#.convert('RGB')
         print("AB", AB, AB.format_description, AB.mode)
         import numpy as np
         img_matrix = np.array(AB)
