@@ -59,6 +59,7 @@ class AlignedDataset(BaseDataset):
         transform_list = []
         transform_list += [transforms.ToTensor()]
         A = transforms.Compose(transform_list)(A)
+        B = transforms.Compose(transform_list)(B)
         # A = A_transform(A)
         # B = B_transform(B)
         print("A", A)
@@ -67,12 +68,10 @@ class AlignedDataset(BaseDataset):
         import torch
         default_float_dtype = torch.get_default_dtype()
         A = A.to(dtype=default_float_dtype).div(65535)
+        B = B.to(dtype=default_float_dtype).div(65535)
         print("A2", A)
         img_matrix = np.array(A)
         print(img_matrix, np.unique(img_matrix))
-
-        
-
 
         return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
 
