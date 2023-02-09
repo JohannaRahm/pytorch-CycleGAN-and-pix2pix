@@ -9,6 +9,7 @@ from torch.optim import lr_scheduler
 # Helper Functions
 ###############################################################################
 
+print("networks.py loaded")
 
 class Identity(nn.Module):
     def forward(self, x):
@@ -364,7 +365,7 @@ class ResnetGenerator(nn.Module):
             #           norm_layer(int(ngf * mult / 2)),
             #           nn.ReLU(True)]
             # upsampling, pad conv3x3
-            print("checkerboard changes")
+            print("XXXXXXXXXX checkerboard changes XXXXXXXXXXXXXX")
             model += [nn.Upsample(scale_factor=2, mode="nearest")]
             model += [nn.ReflectionPad2d(1)]
             model += [nn.Conv2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=1, padding=0)]
