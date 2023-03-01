@@ -555,7 +555,7 @@ class UnetSkipConnectionBlock(nn.Module):
                 #                        nn.Conv2d(inner_nc * 2, outer_nc, kernel_size=3, stride=1, padding=0, bias=use_bias),
                 #                        )
                 # upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
-                upconv = nn.Conv2d(inner_nc * 2, outer_nc,
+                upconv = nn.Conv2d(inner_nc, outer_nc,
                                    kernel_size=3, stride=1,
                                    padding=1)
                 up = [uprelu, nn.Upsample(scale_factor=2, mode='nearest'), upconv, upnorm]
