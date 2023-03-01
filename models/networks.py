@@ -529,7 +529,10 @@ class UnetSkipConnectionBlock(nn.Module):
                                             kernel_size=4, stride=2,
                                             padding=1)
             else:
-                upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
+                upconv = nn.Sequential(nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True),
+                                       nn.Conv2d(inner_nc * 2, outer_nc, kernel_size=3, stride=1, padding=0),
+                                       )
+                # upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
             down = [downconv]
             up = [uprelu, upconv, nn.Tanh()]
             model = down + [submodule] + up
@@ -539,7 +542,10 @@ class UnetSkipConnectionBlock(nn.Module):
                                             kernel_size=4, stride=2,
                                             padding=1, bias=use_bias)
             else:
-                upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
+                upconv = nn.Sequential(nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True),
+                                       nn.Conv2d(inner_nc * 2, outer_nc, kernel_size=3, stride=1, padding=0, bias=use_bias),
+                                       )
+                # upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
             down = [downrelu, downconv]
             up = [uprelu, upconv, upnorm]
             model = down + up
@@ -549,7 +555,10 @@ class UnetSkipConnectionBlock(nn.Module):
                                             kernel_size=4, stride=2,
                                             padding=1, bias=use_bias)
             else:
-                upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
+                # upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
+                upconv = nn.Sequential(nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True),
+                                       nn.Conv2d(inner_nc * 2, outer_nc, kernel_size=3, stride=1, padding=0, bias=use_bias),
+                                       )
             down = [downrelu, downconv, downnorm]
             up = [uprelu, upconv, upnorm]
 
@@ -567,23 +576,23 @@ class UnetSkipConnectionBlock(nn.Module):
             return torch.cat([x, self.model(x)], 1)
 
 
-class UpsampleConLayer(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride, upsample=None):
-        super(UpsampleConLayer, self).__init__()
-        self.upsample = upsample
-        if upsample:
-            self.upsample_layer = torch.nn.Upsample(scale_factor=upsample)
-        reflection_padding = kernel_size // 2
-        self.reflection_pad = torch.nn.ReflectionPad2d(reflection_padding)
-        self.conv2d = torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride)
-
-    def forward(self, x):
-        x_in = x
-        if self.upsample:
-            x_in = self.upsample_layer(x_in)
-        out = self.reflection_pad(x_in)
-        out = self.conv2d(out)
-        return out
+# class UpsampleConLayer(torch.nn.Module):
+#     def __init__(self, in_channels, out_channels, kernel_size, stride, upsample=None):
+#         super(UpsampleConLayer, self).__init__()
+#         self.upsample = upsample
+#         if upsample:
+#             self.upsample_layer = torch.nn.Upsample(scale_factor=upsample)
+#         reflection_padding = kernel_size // 2
+#         self.reflection_pad = torch.nn.ReflectionPad2d(reflection_padding)
+#         self.conv2d = torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride)
+#
+#     def forward(self, x):
+#         x_in = x
+#         if self.upsample:
+#             x_in = self.upsample_layer(x_in)
+#         out = self.reflection_pad(x_in)
+#         out = self.conv2d(out)
+#         return out
 
 
 class NLayerDiscriminator(nn.Module):
