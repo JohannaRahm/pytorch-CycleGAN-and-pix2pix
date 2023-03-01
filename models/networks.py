@@ -529,7 +529,8 @@ class UnetSkipConnectionBlock(nn.Module):
                                             kernel_size=4, stride=2,
                                             padding=1)
             else:
-                upconv = nn.Sequential(nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True),
+                upconv = nn.Sequential(nn.Upsample(scale_factor=2, mode="nearest"),
+                                       nn.ReflectionPad2d(1),
                                        nn.Conv2d(inner_nc * 2, outer_nc, kernel_size=3, stride=1, padding=0),
                                        )
                 # upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
@@ -542,7 +543,8 @@ class UnetSkipConnectionBlock(nn.Module):
                                             kernel_size=4, stride=2,
                                             padding=1, bias=use_bias)
             else:
-                upconv = nn.Sequential(nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True),
+                upconv = nn.Sequential(nn.Upsample(scale_factor=2, mode="nearest"),
+                                       nn.ReflectionPad2d(1),
                                        nn.Conv2d(inner_nc * 2, outer_nc, kernel_size=3, stride=1, padding=0, bias=use_bias),
                                        )
                 # upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
@@ -556,7 +558,8 @@ class UnetSkipConnectionBlock(nn.Module):
                                             padding=1, bias=use_bias)
             else:
                 # upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
-                upconv = nn.Sequential(nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True),
+                upconv = nn.Sequential(nn.Upsample(scale_factor=2, mode="nearest"),
+                                       nn.ReflectionPad2d(1),
                                        nn.Conv2d(inner_nc * 2, outer_nc, kernel_size=3, stride=1, padding=0, bias=use_bias),
                                        )
             down = [downrelu, downconv, downnorm]
