@@ -149,9 +149,13 @@ def define_G(input_nc, output_nc, ngf, netG, norm='batch', use_dropout=False, in
     norm_layer = get_norm_layer(norm_type=norm)
     print("netG", netG)
     if netG == 'resnet_9blocks':
-        net = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=9)
+        net = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=9, use_deconvolution=True)
+    elif netG == 'resnet_9blocks+':
+        net = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=9, use_deconvolution=False)
     elif netG == 'resnet_6blocks':
-        net = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=6)
+        net = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=6, use_deconvolution=True)
+    elif netG == 'resnet_6blocks+':
+        net = ResnetGenerator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=6, use_deconvolution=False)
     elif netG == 'unet_128':
         net = UnetGenerator(input_nc, output_nc, 7, ngf, norm_layer=norm_layer, use_dropout=use_dropout)
     elif netG == 'unet_256':
@@ -320,7 +324,7 @@ class ResnetGenerator(nn.Module):
     We adapt Torch code and idea from Justin Johnson's neural style transfer project(https://github.com/jcjohnson/fast-neural-style)
     """
 
-    def __init__(self, input_nc, output_nc, ngf=64, norm_layer=nn.BatchNorm2d, use_dropout=False, n_blocks=6, padding_type='reflect'):
+    def __init__(self, input_nc, output_nc, ngf=64, norm_layer=nn.BatchNorm2d, use_dropout=False, n_blocks=6, padding_type='reflect', use_deconvolution=True):
         """Construct a Resnet-based generator
 
         Parameters:
@@ -331,6 +335,7 @@ class ResnetGenerator(nn.Module):
             use_dropout (bool)  -- if use dropout layers
             n_blocks (int)      -- the number of ResNet blocks
             padding_type (str)  -- the name of padding layer in conv layers: reflect | replicate | zero
+            use_deconvolution (bool) -- if deconv layers should be used
         """
         assert(n_blocks >= 0)
         super(ResnetGenerator, self).__init__()
@@ -358,17 +363,22 @@ class ResnetGenerator(nn.Module):
 
         for i in range(n_downsampling):  # add upsampling layers
             mult = 2 ** (n_downsampling - i)
-            # model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2),
-            #                              kernel_size=3, stride=2,
-            #                              padding=1, output_padding=1,
-            #                              bias=use_bias),
-            #           norm_layer(int(ngf * mult / 2)),
-            #           nn.ReLU(True)]
-            # upsampling, pad conv3x3
-            print("XXXXXXXXXX checkerboard changes XXXXXXXXXXXXXX")
-            model += [nn.Upsample(scale_factor=2, mode="nearest")]
-            model += [nn.ReflectionPad2d(1)]
-            model += [nn.Conv2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=1, padding=0)]
+            if use_deconvolution:
+                print("XXXXXXXXXX deconvolution XXXXXXXXXXXXXX")
+                model += [nn.ConvTranspose2d(ngf * mult, int(ngf * mult / 2),
+                                             kernel_size=3, stride=2,
+                                             padding=1, output_padding=1,
+                                             bias=use_bias),
+                          norm_layer(int(ngf * mult / 2)),
+                          nn.ReLU(True)]
+            else:
+                print("XXXXXXXXXX checkerboard changes XXXXXXXXXXXXXX")
+                model += [nn.Upsample(scale_factor=2, mode="nearest")]
+                model += [nn.ReflectionPad2d(1)]
+                model += [nn.Conv2d(ngf * mult, int(ngf * mult / 2), kernel_size=3, stride=1, padding=0)]
+
+            # model += [norm_layer(int(ngf * mult / 2)), nn.ReLU(True)]
+
         model += [nn.ReflectionPad2d(3)]
         model += [nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0)]
         model += [nn.Tanh()]
