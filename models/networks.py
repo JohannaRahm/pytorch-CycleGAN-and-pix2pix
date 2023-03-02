@@ -523,6 +523,10 @@ class UnetSkipConnectionBlock(nn.Module):
         uprelu = nn.ReLU(True)
         upnorm = norm_layer(outer_nc)
 
+        ks = 4
+        stride = 2
+        mode = "nearest"
+
         if outermost:
             if use_deconvolution:
                 upconv = nn.ConvTranspose2d(inner_nc * 2, outer_nc,
@@ -536,9 +540,9 @@ class UnetSkipConnectionBlock(nn.Module):
                 #                        )
                 # upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
                 upconv = nn.Conv2d(inner_nc * 2, outer_nc,
-                                   kernel_size=3, stride=1,
+                                   kernel_size=ks, stride=stride,
                                    padding=1)
-                up = [uprelu, nn.Upsample(scale_factor=2, mode='nearest'), upconv, nn.Tanh()]
+                up = [uprelu, nn.Upsample(scale_factor=2, mode=mode), upconv, nn.Tanh()]
             down = [downconv]
 
             model = down + [submodule] + up
@@ -556,9 +560,9 @@ class UnetSkipConnectionBlock(nn.Module):
                 #                        )
                 # upconv = UpsampleConLayer(inner_nc * 2, outer_nc, kernel_size=3, stride=1, upsample=2)
                 upconv = nn.Conv2d(inner_nc, outer_nc,
-                                   kernel_size=3, stride=1,
+                                   kernel_size=ks, stride=stride,
                                    padding=1)
-                up = [uprelu, nn.Upsample(scale_factor=2, mode='nearest'), upconv, upnorm]
+                up = [uprelu, nn.Upsample(scale_factor=2, mode=mode), upconv, upnorm]
 
             down = [downrelu, downconv]
             model = down + up
@@ -575,9 +579,9 @@ class UnetSkipConnectionBlock(nn.Module):
                 #                        nn.Conv2d(inner_nc * 2, outer_nc, kernel_size=3, stride=1, padding=0, bias=use_bias),
                 #                        )
                 upconv = nn.Conv2d(inner_nc * 2, outer_nc,
-                                   kernel_size=3, stride=1,
+                                   kernel_size=ks, stride=stride,
                                    padding=1, bias=use_bias)
-                up = [uprelu, nn.Upsample(scale_factor=2, mode='nearest'), upconv, upnorm]
+                up = [uprelu, nn.Upsample(scale_factor=2, mode=mode), upconv, upnorm]
             down = [downrelu, downconv, downnorm]
 
 
