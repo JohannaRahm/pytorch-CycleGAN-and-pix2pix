@@ -523,9 +523,9 @@ class UnetSkipConnectionBlock(nn.Module):
         uprelu = nn.ReLU(True)
         upnorm = norm_layer(outer_nc)
 
-        ks = 4
-        stride = 2
-        mode = "nearest"
+        ks = 3
+        stride = 1
+        mode = "bilinear"
 
         if outermost:
             if use_deconvolution:
