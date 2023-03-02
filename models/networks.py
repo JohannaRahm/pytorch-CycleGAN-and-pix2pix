@@ -525,7 +525,7 @@ class UnetSkipConnectionBlock(nn.Module):
 
         ks = 3
         stride = 1
-        mode = "bilinear"
+        mode = "nearest"
 
         if outermost:
             if use_deconvolution:
